@@ -75,6 +75,32 @@ class MovieNotesController {
     response.json()
   }
 
+  async update(request, response) {
+    const { title, description, rating } = request.body
+    const { id } = request.params
+
+    const movie_note = await knex('movie_notes').where('id', id).first()
+
+
+    if (rating < 1 || rating > 5) {
+      throw new AppError('Rating must be between 1 and 5')
+    }
+
+    const updatedMovieNote = { ...movie_note }
+
+    updatedMovieNote.title = title ?? movie_note.title
+    updatedMovieNote.description = description ?? movie_note.description
+    updatedMovieNote.rating = rating ?? movie_note.rating
+
+    await knex('movie_notes').where({ id }).update({
+      title: updatedMovieNote.title,
+      description: updatedMovieNote.description,
+      rating: updatedMovieNote.rating
+    })
+
+    return response.json()
+  }
+
   async show(request, response) {
     const { id } = request.params
 
