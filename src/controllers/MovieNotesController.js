@@ -74,6 +74,18 @@ class MovieNotesController {
 
     response.json()
   }
+
+  async show(request, response) {
+    const { id } = request.params
+
+    const movie_note = await knex('movie_notes').where({ id }).first()
+    const movie_tags = await knex('movie_tags').where({ movie_note_id: id }).orderBy('name')
+
+    return response.json({
+      ...movie_note,
+      movie_tags
+    })
+  }
 }
 
 module.exports = MovieNotesController
